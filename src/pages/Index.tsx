@@ -20,11 +20,21 @@ const Index = () => {
     // Salva os parâmetros UTM
     saveUtmParams();
 
+    // Verifica se já enviou o evento new.lead nesta sessão
+    const leadSent = sessionStorage.getItem('new_lead_sent');
+    
+    if (leadSent === 'true') {
+      console.log('⏭️ Evento new.lead já foi enviado nesta sessão');
+      return;
+    }
+
     // Timer de 10 segundos para enviar evento new.lead
     const timer = setTimeout(() => {
       // Envia o evento new.lead após 10 segundos
       sendLead('page-visit-10s', 'new.lead')
         .then(() => {
+          // Marca como enviado para não enviar novamente
+          sessionStorage.setItem('new_lead_sent', 'true');
           console.log('✅ Evento new.lead enviado com sucesso após 10 segundos');
         })
         .catch((error) => {

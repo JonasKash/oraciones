@@ -15,6 +15,9 @@ interface LeadData {
   device_type: string;              // mobile/desktop/tablet
   platform: string;                 // Sistema operacional
   ip_address?: string;              // IP (opcional)
+  country?: string;                 // País
+  city?: string;                    // Cidade
+  region?: string;                  // Estado/Região
   lead?: {
     email?: string;
     name?: string;
@@ -33,22 +36,56 @@ const getDeviceType = (): string => {
   return 'desktop';
 };
 
-// Busca IP do usuário (com timeout de 2s)
-const getIPAddress = async (): Promise<string | undefined> => {
+// Busca IP e localização do usuário (com timeout de 3s)
+const getIPAndLocation = async (): Promise<{
+  ip?: string;
+  country?: string;
+  city?: string;
+  region?: string;
+}> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
     
-    const response = await fetch('https://api.ipify.org?format=json', {
+    // Usa ipapi.co que retorna IP + localização completa
+    const response = await fetch('https://ipapi.co/json/', {
       signal: controller.signal
     });
     
     clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch location data');
+    }
+    
     const data = await response.json();
-    return data.ip;
+    
+    return {
+      ip: data.ip,
+      country: data.country_name,
+      city: data.city,
+      region: data.region
+    };
   } catch (error) {
-    console.warn('Could not fetch IP address:', error);
-    return undefined;
+    console.warn('Could not fetch IP and location:', error);
+    
+    // Fallback: tenta apenas pegar o IP
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      
+      const response = await fetch('https://api.ipify.org?format=json', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      const data = await response.json();
+      
+      return { ip: data.ip };
+    } catch (fallbackError) {
+      console.warn('Fallback IP fetch also failed:', fallbackError);
+      return {};
+    }
   }
 };
 
@@ -91,8 +128,8 @@ export const useWebhook = () => {
     setError(null);
 
     try {
-      // Coleta IP em paralelo (não bloqueia o envio)
-      const ipPromise = getIPAddress();
+      // Coleta IP e localização em paralelo (não bloqueia o envio)
+      const locationPromise = getIPAndLocation();
 
       // Monta o payload
       const payload: LeadData = {
@@ -112,11 +149,22 @@ export const useWebhook = () => {
         ...additionalData
       };
 
-      // Aguarda IP (máx 2s)
-      const ip = await ipPromise;
-      if (ip) {
-        payload.ip_address = ip;
+      // Aguarda IP e localização (máx 3s)
+      const locationData = await locationPromise;
+      if (locationData.ip) {
+        payload.ip_address = locationData.ip;
       }
+      if (locationData.country) {
+        payload.country = locationData.country;
+      }
+      if (locationData.city) {
+        payload.city = locationData.city;
+      }
+      if (locationData.region) {
+        payload.region = locationData.region;
+      }
+
+      console.log('📍 Localização capturada:', locationData);
 
       // Envia para o webhook N8N
       const response = await fetch('https://wbn.araxa.app/webhook/receive-inf', {
