@@ -144,6 +144,18 @@ const PricingSection = () => {
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-lg">🎁</span>
+                <span className="font-semibold">Versículos Poderosos por Área de la Vida</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-lg">🎁</span>
+                <span className="font-semibold">Los 50 Versículos Más Memorables</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-lg">🎁</span>
+                <span className="font-semibold">Cómo Leer la Biblia en 90 Días</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-lg">🎁</span>
                 <span className="font-semibold">Oraciones Guiadas Versión Audio</span>
               </li>
               <li className="flex items-start gap-3">

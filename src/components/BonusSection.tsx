@@ -36,16 +36,16 @@ const BonusSection = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-4">
           <span className="inline-block bg-gold/20 text-gold-foreground px-4 py-1 rounded-full text-sm font-semibold uppercase tracking-wider">
-            🎁 Bonos Exclusivos incluidos hoy
+            🎁 Bonos incluidos hoy (sin costo adicional)
           </span>
         </div>
 
         <h2 className="font-heading text-3xl md:text-4xl text-center mb-4">
-          Para que tu experiencia de oración sea completa,
+          Para acompañar tu proceso de oración,
         </h2>
 
         <p className="text-center text-muted-foreground mb-16 max-w-xl mx-auto">
-          recibes herramientas adicionales que fortalecen tu fe día tras día.
+          recibes material extra que refuerza tu fe día tras día.
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
