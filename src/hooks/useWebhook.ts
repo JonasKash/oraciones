@@ -36,56 +36,100 @@ const getDeviceType = (): string => {
   return 'desktop';
 };
 
-// Busca IP e localização do usuário (com timeout de 3s)
+// Busca IP e localização do usuário (com timeout de 5s)
 const getIPAndLocation = async (): Promise<{
   ip?: string;
   country?: string;
   city?: string;
   region?: string;
 }> => {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    
-    // Usa ipapi.co que retorna IP + localização completa
-    const response = await fetch('https://ipapi.co/json/', {
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch location data');
+  // Tenta múltiplas APIs em sequência até conseguir uma resposta
+  const apis = [
+    {
+      name: 'ip-api.com',
+      url: 'http://ip-api.com/json/?fields=status,country,regionName,city,query',
+      parser: (data: any) => ({
+        ip: data.query,
+        country: data.country,
+        city: data.city,
+        region: data.regionName
+      })
+    },
+    {
+      name: 'ipapi.co',
+      url: 'https://ipapi.co/json/',
+      parser: (data: any) => ({
+        ip: data.ip,
+        country: data.country_name,
+        city: data.city,
+        region: data.region
+      })
+    },
+    {
+      name: 'ipwhois.app',
+      url: 'https://ipwhois.app/json/',
+      parser: (data: any) => ({
+        ip: data.ip,
+        country: data.country,
+        city: data.city,
+        region: data.region
+      })
     }
-    
-    const data = await response.json();
-    
-    return {
-      ip: data.ip,
-      country: data.country_name,
-      city: data.city,
-      region: data.region
-    };
-  } catch (error) {
-    console.warn('Could not fetch IP and location:', error);
-    
-    // Fallback: tenta apenas pegar o IP
+  ];
+
+  // Tenta cada API até conseguir uma resposta válida
+  for (const api of apis) {
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      console.log(`🔍 Tentando API: ${api.name}`);
       
-      const response = await fetch('https://api.ipify.org?format=json', {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
+      const response = await fetch(api.url, {
         signal: controller.signal
       });
       
       clearTimeout(timeoutId);
-      const data = await response.json();
       
-      return { ip: data.ip };
-    } catch (fallbackError) {
-      console.warn('Fallback IP fetch also failed:', fallbackError);
-      return {};
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const result = api.parser(data);
+      
+      // Verifica se os dados essenciais estão presentes
+      if (result.ip && result.city) {
+        console.log(`✅ Geolocalização obtida via ${api.name}:`, result);
+        return result;
+      }
+      
+      throw new Error('Dados incompletos');
+      
+    } catch (error) {
+      console.warn(`❌ Falha na API ${api.name}:`, error);
+      // Continua para a próxima API
     }
+  }
+  
+  // Se todas as APIs falharam, tenta apenas pegar o IP
+  console.warn('⚠️ Todas as APIs de geolocalização falharam, tentando apenas IP...');
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    
+    const response = await fetch('https://api.ipify.org?format=json', {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    const data = await response.json();
+    
+    console.log('✅ IP obtido (sem localização):', data.ip);
+    return { ip: data.ip };
+  } catch (fallbackError) {
+    console.error('❌ Falha total ao obter dados de localização:', fallbackError);
+    return {};
   }
 };
 
