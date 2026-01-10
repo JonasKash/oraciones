@@ -281,3 +281,4 @@ cat CHECKLIST.md
 
 **✨ Sistema pronto! Comece com: `npm run dev`**
 
+

@@ -149,3 +149,4 @@ Após as vendas começarem a entrar:
 
 Para dúvidas ou problemas, revise este guia ou consulte o código em `src/utils/utmHelper.ts`.
 
+

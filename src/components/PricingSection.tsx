@@ -11,27 +11,27 @@ const PricingSection = () => {
     saveUtmParams();
   }, []);
 
-  // Handler para o botão da oferta de $8
+  // Handler para o botão da oferta de $6
   const handleBasicPlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     
-    console.log('🛒 Clique no botão $8 USD detectado');
+    console.log('🛒 Clique no botão $6 USD detectado');
     
     // 1. Envia webhook para N8N com evento específico
-    const webhookPromise = sendLead('offer-8', 'button_click_offer_8').catch(error => {
-      console.error('Error sending lead for $8 offer:', error);
+    const webhookPromise = sendLead('offer-6', 'button_click_offer_6').catch(error => {
+      console.error('Error sending lead for $6 offer:', error);
     });
 
     // 2. Dispara eventos do Pixel Meta
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
-        content_name: 'Plan Básico $8',
-        value: 8.00,
+        content_name: 'Plan Básico $6',
+        value: 6.00,
         currency: 'USD'
       });
       (window as any).fbq('track', 'InitiateCheckout', {
-        content_name: 'Plan Básico $8',
-        value: 8.00,
+        content_name: 'Plan Básico $6',
+        value: 6.00,
         currency: 'USD'
       });
     }
@@ -49,27 +49,27 @@ const PricingSection = () => {
     window.location.href = finalUrl;
   };
 
-  // Handler para o botão da oferta de $12
+  // Handler para o botão da oferta de $9
   const handleCompletePlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     
-    console.log('🛒 Clique no botão $12 USD detectado');
+    console.log('🛒 Clique no botão $9 USD detectado');
     
     // 1. Envia webhook para N8N com evento específico
-    const webhookPromise = sendLead('offer-12', 'button_click_offer_12').catch(error => {
-      console.error('Error sending lead for $12 offer:', error);
+    const webhookPromise = sendLead('offer-9', 'button_click_offer_9').catch(error => {
+      console.error('Error sending lead for $9 offer:', error);
     });
 
     // 2. Dispara eventos do Pixel Meta
     if (typeof window !== 'undefined' && (window as any).fbq) {
       (window as any).fbq('track', 'Lead', {
-        content_name: 'Plan Completo $12',
-        value: 12.00,
+        content_name: 'Plan Completo $9',
+        value: 9.00,
         currency: 'USD'
       });
       (window as any).fbq('track', 'InitiateCheckout', {
-        content_name: 'Plan Completo $12',
-        value: 12.00,
+        content_name: 'Plan Completo $9',
+        value: 9.00,
         currency: 'USD'
       });
     }
@@ -113,8 +113,8 @@ const PricingSection = () => {
             
             <div className="mb-6">
               <span className="text-muted-foreground line-through">$ 10 USD</span>
-              <div className="text-4xl font-bold font-heading text-foreground">$ 8 USD</div>
-              <span className="text-success text-sm font-medium">💰 Ahorra $ 2 USD</span>
+              <div className="text-4xl font-bold font-heading text-foreground">$ 6 USD</div>
+              <span className="text-success text-sm font-medium">💰 Ahorra $ 4 USD</span>
             </div>
 
             <ul className="space-y-4 mb-8">
@@ -137,7 +137,7 @@ const PricingSection = () => {
               onClick={handleBasicPlanClick}
               className="block w-full bg-secondary text-secondary-foreground py-4 rounded-full font-semibold text-center hover:bg-secondary/80 transition-colors"
             >
-              RECIBIR GUÍA POR $8USD
+              RECIBIR GUÍA POR $6USD
             </a>
           </div>
 
@@ -155,8 +155,8 @@ const PricingSection = () => {
             
             <div className="mb-6">
               <span className="text-muted-foreground line-through">$ 14 USD</span>
-              <div className="text-4xl font-bold font-heading text-foreground">$ 12 USD</div>
-              <span className="text-success text-sm font-medium">💰 Ahorra $ 2 USD</span>
+              <div className="text-4xl font-bold font-heading text-foreground">$ 9 USD</div>
+              <span className="text-success text-sm font-medium">💰 Ahorra $ 5 USD</span>
             </div>
 
             <ul className="space-y-4 mb-8">
@@ -191,7 +191,7 @@ const PricingSection = () => {
               onClick={handleCompletePlanClick}
               className="block w-full bg-gradient-cta text-foreground py-4 rounded-full font-semibold text-center hover:opacity-90 transition-all animate-pulse-glow"
             >
-              RECIBIR GUÍA COMPLETA POR $12USD
+              RECIBIR GUÍA COMPLETA POR $9USD
             </a>
           </div>
         </div>

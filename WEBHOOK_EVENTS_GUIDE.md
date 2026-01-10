@@ -425,3 +425,4 @@ const timeoutId = setTimeout(() => controller.abort(), 2000);
 
 Salve este guia para referência futura e para replicar em outros projetos. 🚀
 
+
