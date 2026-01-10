@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de UTM - Guía de Oraciones</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .test-link {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .test-link:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .test-link.instagram { background: #E1306C; }
+        .test-link.instagram:hover { background: #C13584; }
+        .test-link.facebook { background: #1877F2; }
+        .test-link.facebook:hover { background: #166FE5; }
+        .test-link.google { background: #DB4437; }
+        .test-link.google:hover { background: #C53929; }
+        .test-link.email { background: #F39C12; }
+        .test-link.email:hover { background: #E67E22; }
+        .info-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .info-box code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .checklist li:before {
+            content: "✓ ";
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Página de Teste de UTM</h1>
+        <p class="subtitle">Sistema de Rastreamento para Hotmart</p>
+
+        <div class="test-section">
+            <h2>📱 Links de Teste por Plataforma</h2>
+            <p>Clique em qualquer link abaixo para testar o sistema com diferentes UTMs:</p>
+            
+            <div class="test-links">
+                <a href="/?utm_source=instagram&utm_medium=stories&utm_campaign=oraciones_jan2026&utm_content=reel_v1&utm_term=target_prosperidade" 
+                   class="test-link instagram">
+                    📸 Instagram Stories
+                </a>
+                
+                <a href="/?utm_source=facebook&utm_medium=cpc&utm_campaign=oraciones_jan2026&utm_content=video_v1&utm_term=target_espiritual" 
+                   class="test-link facebook">
+                    👍 Facebook Ads
+                </a>
+                
+                <a href="/?utm_source=google&utm_medium=cpc&utm_campaign=oraciones_jan2026&utm_content=text_ad_v1&utm_term=oraciones_guiadas&gclid=test123" 
+                   class="test-link google">
+                    🔍 Google Ads
+                </a>
+                
+                <a href="/?utm_source=mailchimp&utm_medium=email&utm_campaign=oraciones_launch_jan2026&utm_content=newsletter_week1" 
+                   class="test-link email">
+                    ✉️ Email Marketing
+                </a>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ Como Testar</h2>
+            <ul class="checklist">
+                <li>Clique em um dos links de teste acima</li>
+                <li>Abra o Console do navegador (F12)</li>
+                <li>Digite: <code>sessionStorage.getItem('utm_params')</code></li>
+                <li>Verifique se os UTMs foram capturados</li>
+                <li>Role até a seção de preços</li>
+                <li>Clique em "Quiero la Guía por $ 8 USD" ou "PLAN COMPLETO $12"</li>
+                <li>Observe a URL da Hotmart - deve incluir os UTMs</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 Dica:</strong> Para testar manualmente, adicione <code>?utm_source=teste&utm_medium=manual&utm_campaign=teste2026</code> 
+            ao final da URL da sua página.
+        </div>
+
+        <div class="info-box" style="margin-top: 10px;">
+            <strong>🎯 URLs Esperadas:</strong><br>
+            <small>
+                Plano $8: <code>pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10&utm_source=...</code><br>
+                Plano $12: <code>pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10&utm_source=...</code>
+            </small>
+        </div>
+    </div>
+
+    <script>
+        // Script para mostrar UTMs atuais na página
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const hasUtm = Array.from(params.keys()).some(key => key.startsWith('utm_'));
+            
+            if (hasUtm) {
+                const utmParams = {};
+                params.forEach((value, key) => {
+                    if (key.startsWith('utm_') || key === 'fbclid' || key === 'gclid') {
+                        utmParams[key] = value;
+                    }
+                });
+                
+                // Criar um alert visual mostrando os UTMs capturados
+                const alert = document.createElement('div');
+                alert.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    z-index: 9999;
+                    max-width: 300px;
+                `;
+                alert.innerHTML = `
+                    <strong>✅ UTMs Detectados!</strong><br>
+                    <small style="opacity: 0.9;">${JSON.stringify(utmParams, null, 2)}</small>
+                `;
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.style.transition = 'opacity 0.5s';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 500);
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
+

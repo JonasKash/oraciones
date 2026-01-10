@@ -1,0 +1,295 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 RESUMO: SISTEMA DE EVENTOS WEBHOOKS + PIXELS IMPLEMENTADO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📅 Data: 10 de Janeiro de 2026
+🔧 Status: ✅ IMPLEMENTADO E FUNCIONAL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📦 ARQUIVOS CRIADOS/MODIFICADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ NOVO: src/hooks/useWebhook.ts
+   → Hook customizado para gerenciar webhooks
+   → Coleta automática de dados do usuário
+   → Sistema de timeout e tratamento de erros
+   → Integração com sessionStorage (UTMs)
+
+✅ ATUALIZADO: src/components/PricingSection.tsx
+   → Import do useWebhook
+   → handleBasicPlanClick() - Evento: button_click_offer_8
+   → handleCompletePlanClick() - Evento: button_click_offer_12
+   → Integração com Meta Pixel (fbq)
+   → Sistema assíncrono com Promise.race()
+
+✅ ATUALIZADO: index.html
+   → Meta Pixel já estava instalado ✓
+   → Utmify Pixel ADICIONADO (linhas 42-51)
+
+✅ NOVO: WEBHOOK_EVENTS_GUIDE.md
+   → Documentação completa do sistema
+   → Guias de teste
+   → Exemplos de payload
+   → Checklist de implementação
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 EVENTOS CONFIGURADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔹 WEBHOOK N8N: https://wbn.araxa.app/webhook/receive-inf
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ EVENTO                    │ SOURCE   │ QUANDO DISPARA              │
+├─────────────────────────────────────────────────────────────────────┤
+│ button_click_offer_8      │ offer-8  │ Clique no botão "$8 USD"    │
+│ button_click_offer_12     │ offer-12 │ Clique no botão "$12 USD"   │
+└─────────────────────────────────────────────────────────────────────┘
+
+🔹 META PIXEL: 1422030825926532
+
+┌─────────────────────────────────────────────────────────────────────┐
+│ EVENTO              │ QUANDO DISPARA                                │
+├─────────────────────────────────────────────────────────────────────┤
+│ PageView            │ Carregamento automático da página            │
+│ Lead (Oferta $8)    │ Clique no botão "$8 USD"                      │
+│ InitiateCheckout    │ Clique no botão "$8 USD"                      │
+│ Lead (Oferta $12)   │ Clique no botão "$12 USD"                     │
+│ InitiateCheckout    │ Clique no botão "$12 USD"                     │
+└─────────────────────────────────────────────────────────────────────┘
+
+🔹 UTMIFY PIXEL: 6961e573cb6d9ff440e595b9
+   → Rastreamento automático de visualizações e conversões
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔄 FLUXO COMPLETO: BOTÃO "$8 USD"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 👆 USUÁRIO CLICA NO BOTÃO "Quiero la Guía por $ 8 USD"
+   │
+   ├─→ 📡 WEBHOOK N8N
+   │   ✅ POST: https://wbn.araxa.app/webhook/receive-inf
+   │   ✅ Evento: button_click_offer_8
+   │   ✅ Source: offer-8
+   │   ✅ Dados enviados:
+   │      • Timestamp
+   │      • URL completa
+   │      • User Agent
+   │      • Device Type (mobile/desktop/tablet)
+   │      • Screen Resolution
+   │      • Timezone
+   │      • IP Address
+   │      • Todos os UTMs salvos
+   │
+   ├─→ 📊 META PIXEL
+   │   ✅ fbq('track', 'Lead', {
+   │        content_name: 'Plan Básico $8',
+   │        value: 8.00,
+   │        currency: 'USD'
+   │      })
+   │   ✅ fbq('track', 'InitiateCheckout', {
+   │        content_name: 'Plan Básico $8',
+   │        value: 8.00,
+   │        currency: 'USD'
+   │      })
+   │
+   └─→ ⏱️ AGUARDA WEBHOOK (máx 500ms)
+       │
+       └─→ 🔀 REDIRECIONA PARA HOTMART
+           ✅ URL: https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10
+           ✅ UTMs adicionados automaticamente:
+              ?off=sxnbohaq&checkoutMode=10&utm_source=...&utm_medium=...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔄 FLUXO COMPLETO: BOTÃO "$12 USD"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 👆 USUÁRIO CLICA NO BOTÃO "PLAN COMPLETO $12"
+   │
+   ├─→ 📡 WEBHOOK N8N
+   │   ✅ POST: https://wbn.araxa.app/webhook/receive-inf
+   │   ✅ Evento: button_click_offer_12
+   │   ✅ Source: offer-12
+   │   ✅ Dados enviados (mesma estrutura do $8)
+   │
+   ├─→ 📊 META PIXEL
+   │   ✅ fbq('track', 'Lead', {
+   │        content_name: 'Plan Completo $12',
+   │        value: 12.00,
+   │        currency: 'USD'
+   │      })
+   │   ✅ fbq('track', 'InitiateCheckout', {
+   │        content_name: 'Plan Completo $12',
+   │        value: 12.00,
+   │        currency: 'USD'
+   │      })
+   │
+   └─→ ⏱️ AGUARDA WEBHOOK (máx 500ms)
+       │
+       └─→ 🔀 REDIRECIONA PARA HOTMART
+           ✅ URL: https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10
+           ✅ UTMs adicionados automaticamente
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📊 DADOS COLETADOS AUTOMATICAMENTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ INFORMAÇÕES DE NAVEGAÇÃO
+   • page_url: URL completa da página
+   • referrer: De onde veio o usuário
+   • user_agent: Navegador e sistema operacional
+
+✅ INFORMAÇÕES GEOGRÁFICAS
+   • timezone: Timezone do usuário (ex: America/Sao_Paulo)
+   • language: Idioma do navegador (ex: pt-BR)
+   • ip_address: IP do usuário (com timeout de 2s)
+
+✅ INFORMAÇÕES DE DISPOSITIVO
+   • device_type: mobile | desktop | tablet
+   • platform: Sistema operacional (Win32, MacIntel, etc)
+   • screen_resolution: Resolução da tela (ex: 1920x1080)
+   • viewport_size: Tamanho da janela (ex: 1366x768)
+
+✅ DADOS DE CAMPANHA (UTMs)
+   • utm_source: Origem do tráfego
+   • utm_medium: Meio de marketing
+   • utm_campaign: Nome da campanha
+   • utm_content: Variação do conteúdo
+   • utm_term: Termo de pesquisa
+   • utm_id: ID da campanha
+   • fbclid: Facebook Click ID
+   • gclid: Google Click ID
+
+✅ METADADOS
+   • event: Nome do evento
+   • timestamp: Data/hora em ISO 8601
+   • source: Origem do evento
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🧪 COMO TESTAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ TESTE LOCAL
+
+   # Inicie o projeto
+   npm run dev
+
+   # Acesse com UTMs de teste
+   http://localhost:5173/?utm_source=teste&utm_medium=manual&utm_campaign=validacao
+
+   # Abra o Console (F12) e monitore
+   # Clique nos botões de oferta
+   # Veja as requisições no Network tab
+
+2️⃣ TESTE DO META PIXEL
+
+   # Instale a extensão
+   Chrome Web Store → "Meta Pixel Helper"
+
+   # Acesse o site
+   # Clique no ícone da extensão
+   # Verifique:
+   ✓ PageView ao carregar
+   ✓ Lead ao clicar nos botões
+   ✓ InitiateCheckout ao clicar nos botões
+
+3️⃣ TESTE DO WEBHOOK N8N (PowerShell)
+
+   Invoke-WebRequest -Uri "https://wbn.araxa.app/webhook/receive-inf" `
+     -Method POST `
+     -ContentType "application/json" `
+     -Body '{"event":"button_click_offer_8","source":"offer-8","timestamp":"2026-01-10T15:00:00Z"}'
+
+4️⃣ VERIFICAR NO GERENCIADOR META
+
+   • Acesse: https://business.facebook.com/events_manager2
+   • Selecione Pixel: 1422030825926532
+   • Clique em "Testar Eventos"
+   • Veja eventos em tempo real
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ CHECKLIST FINAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WEBHOOKS N8N:
+✅ Hook useWebhook.ts criado
+✅ Evento button_click_offer_8 implementado
+✅ Evento button_click_offer_12 implementado
+✅ Coleta automática de dados do usuário
+✅ Sistema de timeout (500ms)
+✅ Tratamento de erros
+
+META PIXEL:
+✅ Pixel instalado (ID: 1422030825926532)
+✅ PageView automático
+✅ Lead nos 2 botões
+✅ InitiateCheckout nos 2 botões
+✅ Valores e moedas corretos
+
+UTMIFY PIXEL:
+✅ Pixel instalado (ID: 6961e573cb6d9ff440e595b9)
+✅ Carregamento assíncrono
+✅ Rastreamento automático
+
+SISTEMA UTM:
+✅ Captura automática
+✅ Salvamento em sessionStorage
+✅ Aplicação nos checkouts
+✅ Compatibilidade fbclid/gclid
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📚 DOCUMENTAÇÃO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 WEBHOOK_EVENTS_GUIDE.md
+   → Guia completo de eventos
+   → Exemplos de payloads
+   → Instruções de teste
+   → Troubleshooting
+
+📄 README.md
+   → Documentação do sistema UTM
+   → Instruções de instalação
+
+📄 TESTING_GUIDE.md
+   → Guia de testes detalhado
+
+📄 RESUMO_VISUAL.txt
+   → Resumo visual das implementações anteriores
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 PRÓXIMOS PASSOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ TESTAR LOCALMENTE
+   npm run dev → Testar todos os eventos
+
+2. ⏳ BUILD DE PRODUÇÃO
+   npm run build
+
+3. ⏳ DEPLOY
+   Deploy no seu servidor/plataforma
+
+4. ⏳ MONITORAMENTO
+   • Acompanhar eventos no N8N
+   • Verificar conversões no Meta Pixel
+   • Monitorar dados no Utmify
+   • Rastrear vendas na Hotmart
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💡 NOTAS IMPORTANTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Sistema robusto com tratamento de erros
+✓ Não bloqueia redirecionamento se webhook falhar
+✓ Performance otimizada (timeouts configurados)
+✓ Funciona com e sem UTMs
+✓ Compatível com bloqueadores de anúncios (graceful degradation)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 SISTEMA COMPLETO DE RASTREAMENTO IMPLEMENTADO COM SUCESSO!
+
+📧 Para dúvidas ou ajustes, consulte: WEBHOOK_EVENTS_GUIDE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
