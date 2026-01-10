@@ -1,10 +1,16 @@
 import { Check, Star } from "lucide-react";
 import CountdownTimer from "./CountdownTimer";
 import { useWebhook } from "@/hooks/useWebhook";
-import { addUtmToCheckoutUrl } from "@/utils/utmHelper";
+import { addUtmToCheckoutUrl, saveUtmParams } from "@/utils/utmHelper";
+import { useEffect } from "react";
 
 const PricingSection = () => {
   const { sendLead } = useWebhook();
+
+  // Salva UTMs quando o componente carrega
+  useEffect(() => {
+    saveUtmParams();
+  }, []);
 
   const handleBasicPlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
