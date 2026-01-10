@@ -6,27 +6,27 @@ import mockupBiblia90Dias from "@/assets/mockup-biblia-90-dias.png";
 const bonuses = [
   {
     image: mockupVersiculosPoderosos,
-    title: "Versículos Poderosos",
-    description: "Recibe una selección exclusiva con los versículos más poderosos para cada área de la vida.",
-    value: "$ 8,57 USD"
+    title: "✔️ Versículos Poderosos por Área de la Vida",
+    description: "Una selección especial de versículos para momentos de: Necesidad financiera, Ansiedad, Decisiones importantes, Paz y fortaleza espiritual.",
+    value: "$ 19,97 USD"
   },
   {
     image: mockup50Versiculos,
-    title: "Los 50 Versículos Más Memorables",
-    description: "Descubre los versículos más memorables de la Biblia para transformar tu vida espiritual.",
-    value: "$ 4,92 USD"
+    title: "✔️ Los 50 Versículos Más Memorables",
+    description: "Los versículos que todo creyente debería conocer y recordar. Ideales para fortalecer la mente y el corazón cada día.",
+    value: "$ 19,97 USD"
   },
   {
     image: mockupBiblia90Dias,
-    title: "Cómo Leer la Biblia en 90 Días",
-    description: "Un plan estructurado paso a paso para leer toda la Biblia en solo 90 días.",
-    value: "$ 4,92 USD"
+    title: "✔️ Cómo Leer la Biblia en 90 Días",
+    description: "Un plan simple y claro para leer la Biblia sin confundirte, incluso si nunca lo intentaste antes.",
+    value: "$ 19,97 USD"
   },
   {
     image: mockup30Oracoes,
-    title: "30 Oraciones Guiadas",
-    description: "Oraciones poderosas para cada área de tu vida con guía paso a paso.",
-    value: "$ 8,57 USD"
+    title: "✔️ 30 Oraciones Guiadas (Edición Completa)",
+    description: "Oraciones paso a paso para cada área importante de tu vida. No improvisas. Solo sigues la guía.",
+    value: "$ 19,97 USD"
   }
 ];
 
@@ -36,16 +36,16 @@ const BonusSection = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-4">
           <span className="inline-block bg-gold/20 text-gold-foreground px-4 py-1 rounded-full text-sm font-semibold uppercase tracking-wider">
-            Bonos Exclusivos
+            🎁 Bonos Exclusivos incluidos hoy
           </span>
         </div>
 
         <h2 className="font-heading text-3xl md:text-4xl text-center mb-4">
-          Completa tu Jornada de Fe y Oración
+          Para que tu experiencia de oración sea completa,
         </h2>
 
         <p className="text-center text-muted-foreground mb-16 max-w-xl mx-auto">
-          Preparamos herramientas adicionales para potenciar tu vida de oración y conexión con Dios.
+          recibes herramientas adicionales que fortalecen tu fe día tras día.
         </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -63,14 +63,23 @@ const BonusSection = () => {
               </div>
               <div className="p-5">
                 <h4 className="font-heading text-lg font-semibold mb-2">{bonus.title}</h4>
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{bonus.description}</p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{bonus.description}</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground line-through">{bonus.value}</span>
-                  <span className="text-success font-bold">GRATIS</span>
+                  <span className="text-sm text-muted-foreground line-through">Valor real: {bonus.value}</span>
+                </div>
+                <div className="mt-2">
+                  <span className="text-success font-bold text-lg">Hoy: GRATIS</span>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Frase de Ancoragem */}
+        <div className="text-center mt-12">
+          <p className="text-lg font-semibold text-foreground">
+            Todo esto está incluido sin costo adicional hoy.
+          </p>
         </div>
       </div>
     </section>
