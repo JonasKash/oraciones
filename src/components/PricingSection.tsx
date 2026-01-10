@@ -1,13 +1,14 @@
 import { Check, Star } from "lucide-react";
 import CountdownTimer from "./CountdownTimer";
 import { useWebhook } from "@/hooks/useWebhook";
+import { addUtmToCheckoutUrl } from "@/utils/utmHelper";
 
 const PricingSection = () => {
   const { sendLead } = useWebhook();
 
   const handleBasicPlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const checkoutUrl = "https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10";
+    const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10";
     
     try {
       // Envia evento para webhook
@@ -21,13 +22,15 @@ const PricingSection = () => {
       console.error('Erro ao enviar webhook:', error);
     }
     
-    // Redireciona para checkout
-    window.location.href = checkoutUrl;
+    // Adiciona UTMs ao checkout e redireciona
+    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    console.log('🔗 Redirecionando para:', checkoutUrlWithUtms);
+    window.location.href = checkoutUrlWithUtms;
   };
 
   const handleCompletePlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const checkoutUrl = "https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10";
+    const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10";
     
     try {
       // Envia evento para webhook
@@ -41,8 +44,10 @@ const PricingSection = () => {
       console.error('Erro ao enviar webhook:', error);
     }
     
-    // Redireciona para checkout
-    window.location.href = checkoutUrl;
+    // Adiciona UTMs ao checkout e redireciona
+    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    console.log('🔗 Redirecionando para:', checkoutUrlWithUtms);
+    window.location.href = checkoutUrlWithUtms;
   };
 
   return (
