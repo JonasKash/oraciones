@@ -46,13 +46,13 @@ const getIPAndLocation = async (): Promise<{
   // Tenta múltiplas APIs em sequência até conseguir uma resposta
   const apis = [
     {
-      name: 'ip-api.com',
-      url: 'http://ip-api.com/json/?fields=status,country,regionName,city,query',
+      name: 'ipwhois.app',
+      url: 'https://ipwhois.app/json/',
       parser: (data: any) => ({
-        ip: data.query,
+        ip: data.ip,
         country: data.country,
         city: data.city,
-        region: data.regionName
+        region: data.region
       })
     },
     {
@@ -66,13 +66,13 @@ const getIPAndLocation = async (): Promise<{
       })
     },
     {
-      name: 'ipwhois.app',
-      url: 'https://ipwhois.app/json/',
+      name: 'freeipapi.com',
+      url: 'https://freeipapi.com/api/json',
       parser: (data: any) => ({
-        ip: data.ip,
-        country: data.country,
-        city: data.city,
-        region: data.region
+        ip: data.ipAddress,
+        country: data.countryName,
+        city: data.cityName,
+        region: data.regionName
       })
     }
   ];
@@ -80,13 +80,14 @@ const getIPAndLocation = async (): Promise<{
   // Tenta cada API até conseguir uma resposta válida
   for (const api of apis) {
     try {
-      console.log(`🔍 Tentando API: ${api.name}`);
+      console.log(`🔍 Tentando API de geolocalização: ${api.name}`);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       const response = await fetch(api.url, {
-        signal: controller.signal
+        signal: controller.signal,
+        method: 'GET'
       });
       
       clearTimeout(timeoutId);
@@ -99,12 +100,13 @@ const getIPAndLocation = async (): Promise<{
       const result = api.parser(data);
       
       // Verifica se os dados essenciais estão presentes
-      if (result.ip && result.city) {
-        console.log(`✅ Geolocalização obtida via ${api.name}:`, result);
+      if (result.ip && result.city && result.country) {
+        console.log(`✅ GEOLOCALIZAÇÃO CAPTURADA via ${api.name}:`, result);
+        console.log(`📍 País: ${result.country} | Cidade: ${result.city} | Região: ${result.region}`);
         return result;
       }
       
-      throw new Error('Dados incompletos');
+      throw new Error('Dados incompletos na resposta da API');
       
     } catch (error) {
       console.warn(`❌ Falha na API ${api.name}:`, error);
@@ -113,7 +115,7 @@ const getIPAndLocation = async (): Promise<{
   }
   
   // Se todas as APIs falharam, tenta apenas pegar o IP
-  console.warn('⚠️ Todas as APIs de geolocalização falharam, tentando apenas IP...');
+  console.warn('⚠️ ATENÇÃO: Todas as APIs de geolocalização falharam! Tentando apenas IP...');
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -125,10 +127,10 @@ const getIPAndLocation = async (): Promise<{
     clearTimeout(timeoutId);
     const data = await response.json();
     
-    console.log('✅ IP obtido (sem localização):', data.ip);
+    console.log('⚠️ IP obtido sem dados de localização:', data.ip);
     return { ip: data.ip };
   } catch (fallbackError) {
-    console.error('❌ Falha total ao obter dados de localização:', fallbackError);
+    console.error('❌ ERRO CRÍTICO: Não foi possível obter nenhum dado de localização:', fallbackError);
     return {};
   }
 };
@@ -193,22 +195,29 @@ export const useWebhook = () => {
         ...additionalData
       };
 
-      // Aguarda IP e localização (máx 3s)
+      // Aguarda IP e localização (máx 5s)
       const locationData = await locationPromise;
+      
+      console.log('📍 DADOS DE LOCALIZAÇÃO RECEBIDOS:', locationData);
+      
       if (locationData.ip) {
         payload.ip_address = locationData.ip;
+        console.log('✅ IP adicionado:', locationData.ip);
       }
       if (locationData.country) {
         payload.country = locationData.country;
+        console.log('✅ País adicionado:', locationData.country);
       }
       if (locationData.city) {
         payload.city = locationData.city;
+        console.log('✅ Cidade adicionada:', locationData.city);
       }
       if (locationData.region) {
         payload.region = locationData.region;
+        console.log('✅ Região adicionada:', locationData.region);
       }
 
-      console.log('📍 Localização capturada:', locationData);
+      console.log('📦 PAYLOAD FINAL A SER ENVIADO:', JSON.stringify(payload, null, 2));
 
       // Envia para o webhook N8N
       const response = await fetch('https://wbn.araxa.app/webhook/receive-inf', {
