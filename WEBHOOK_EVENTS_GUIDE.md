@@ -21,6 +21,7 @@ https://wbn.araxa.app/webhook/receive-inf
 
 | Evento | Source | Quando Dispara | Descrição |
 |--------|--------|---------------|-----------|
+| `new.lead` | `page-visit-10s` | 10 segundos após entrada na página | Lead capturado automaticamente após 10s na página |
 | `button_click_offer_8` | `offer-8` | Clique no botão "$8 USD" | Usuário clica no plano básico |
 | `button_click_offer_12` | `offer-12` | Clique no botão "$12 USD" | Usuário clica no plano completo |
 
@@ -150,6 +151,30 @@ Instalado no `index.html` (linhas 43-52).
 
 ## 🔄 FLUXO COMPLETO DE EVENTOS
 
+### Cenário 0: Usuário Entra na Página (NOVO!)
+
+```
+1. USUÁRIO ACESSA O SITE
+   ↓
+2. META PIXEL DISPARA
+   ✅ fbq('track', 'PageView')
+   ↓
+3. UTMIFY RASTREIA
+   ✅ Visualização de página
+   ✅ Captura de UTMs
+   ↓
+4. TIMER DE 10 SEGUNDOS INICIA
+   ↓
+5. [APÓS 10 SEGUNDOS] WEBHOOK N8N DISPARA AUTOMATICAMENTE
+   ✅ Evento: new.lead
+   ✅ Source: page-visit-10s
+   ✅ Dados completos do usuário enviados
+   ✅ UTMs capturados incluídos
+   
+   💡 Este evento identifica visitantes engajados
+      (pessoas que ficaram pelo menos 10s na página)
+```
+
 ### Cenário 1: Usuário Clica no Plano de $8
 
 ```
@@ -201,6 +226,15 @@ Instalado no `index.html` (linhas 43-52).
 ---
 
 ## 📂 ARQUIVOS MODIFICADOS
+
+### ✅ `src/pages/Index.tsx` (ATUALIZADO)
+Página principal do site.
+
+**Mudanças:**
+- Import do hook `useWebhook`
+- Timer de 10 segundos para enviar evento `new.lead`
+- Evento disparado automaticamente após 10s de permanência na página
+- Cleanup do timer se usuário sair antes de 10s
 
 ### ✅ `src/hooks/useWebhook.ts` (NOVO)
 Hook customizado que gerencia todos os webhooks.
@@ -329,12 +363,30 @@ const timeoutId = setTimeout(() => controller.abort(), 2000);
 - Timeout evita travar o webhook
 - IP não é crítico (webhook envia sem ele se falhar)
 
+### Por que Timer de 10 segundos para new.lead? (NOVO!)
+
+```typescript
+const timer = setTimeout(() => {
+  sendLead('page-visit-10s', 'new.lead');
+}, 10000); // 10 segundos
+
+return () => clearTimeout(timer);
+```
+
+**Motivo:**
+- Identifica visitantes **realmente interessados** (engajamento)
+- Filtra bounces (pessoas que saem imediatamente)
+- Captura leads "quentes" que assistem pelo menos 10s da VSL
+- Cleanup previne envio duplicado se componente remontar
+- **Estratégia de marketing**: Leads que ficam 10s+ têm maior taxa de conversão
+
 ---
 
 ## ✅ CHECKLIST DE IMPLEMENTAÇÃO
 
 ### Webhooks N8N:
 - [x] Hook `useWebhook.ts` criado
+- [x] Evento `new.lead` (10s após entrada) implementado ⭐ NOVO
 - [x] Evento `button_click_offer_8` implementado
 - [x] Evento `button_click_offer_12` implementado
 - [x] Coleta de dados do usuário funcionando
@@ -366,6 +418,7 @@ const timeoutId = setTimeout(() => controller.abort(), 2000);
 ## 🚀 PRÓXIMOS PASSOS
 
 ### 1. Validação Local
+- [ ] Testar evento `new.lead` (após 10 segundos na página) ⭐ NOVO
 - [ ] Testar evento `button_click_offer_8`
 - [ ] Testar evento `button_click_offer_12`
 - [ ] Verificar Meta Pixel Helper
@@ -403,16 +456,108 @@ const timeoutId = setTimeout(() => controller.abort(), 2000);
 
 ## 📝 NOTAS IMPORTANTES
 
-1. **Todos os eventos são disparados ANTES do redirecionamento**
+1. **Evento new.lead captura visitantes engajados** ⭐ NOVO
+   - Dispara automaticamente após 10 segundos na página
+   - Identifica leads "quentes" que assistem a VSL
+   - Cancela automaticamente se usuário sair antes de 10s
+   - Envia para o mesmo webhook com todos os dados de UTM
+
+2. **Todos os eventos são disparados ANTES do redirecionamento**
    - Garante captura de dados mesmo se usuário fechar a página
 
-2. **Sistema funciona com e sem UTMs**
+3. **Sistema funciona com e sem UTMs**
    - Se não houver UTMs, envia dados básicos
    - Se houver UTMs, inclui todos no payload
 
-3. **Tratamento de erros implementado**
+4. **Tratamento de erros implementado**
    - Se webhook falhar, usuário ainda é redirecionado
    - Erros são logados no console para debug
+
+5. **Performance otimizada**
+   - IP buscado com timeout de 2s
+   - Webhook aguardado por max 500ms
+   - Scripts carregados de forma assíncrona
+
+---
+
+## 🧪 COMO TESTAR O NOVO EVENTO new.lead
+
+### Teste Rápido (10 segundos)
+
+1. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
+
+2. Acesse a página com UTMs (opcional):
+```
+http://localhost:5173/?utm_source=facebook&utm_medium=cpc&utm_campaign=teste_lead_10s
+```
+
+3. Abra o Console do navegador (F12)
+
+4. **Aguarde 10 segundos na página** ⏱️
+
+5. Após 10 segundos, você verá no console:
+```
+✅ Evento new.lead enviado com sucesso após 10 segundos
+```
+
+6. Verifique no N8N que o evento foi recebido com:
+   - `event: "new.lead"`
+   - `source: "page-visit-10s"`
+   - Todos os UTMs capturados
+   - Dados completos do navegador
+
+### Teste de Cancelamento
+
+Para verificar que o evento NÃO é enviado se o usuário sair antes de 10s:
+
+1. Acesse a página
+2. **Saia antes de 10 segundos** (feche a aba ou navegue para outra página)
+3. O evento não será enviado (timer cancelado automaticamente)
+
+### Verificação no Network Tab
+
+1. Abra DevTools (F12) → Aba **Network**
+2. Filtre por: `receive-inf`
+3. Aguarde 10 segundos
+4. Você verá a requisição POST para:
+   ```
+   https://wbn.araxa.app/webhook/receive-inf
+   ```
+5. Clique na requisição e verifique o Payload enviado
+
+---
+
+## 📊 EXEMPLO DE PAYLOAD DO EVENTO new.lead
+
+```json
+{
+  "event": "new.lead",
+  "timestamp": "2026-01-10T18:45:23.456Z",
+  "source": "page-visit-10s",
+  "page_url": "https://seusite.com/?utm_source=facebook&utm_campaign=jan2026",
+  "referrer": "https://facebook.com/ads",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+  "language": "pt-BR",
+  "timezone": "America/Sao_Paulo",
+  "screen_resolution": "1920x1080",
+  "viewport_size": "1366x768",
+  "device_type": "desktop",
+  "platform": "Win32",
+  "ip_address": "191.123.45.67",
+  "session_data": {
+    "utm_source": "facebook",
+    "utm_medium": "cpc",
+    "utm_campaign": "jan2026",
+    "utm_content": "video_vsl",
+    "fbclid": "IwAR..."
+  }
+}
+```
+
+---
 
 4. **Performance otimizada**
    - IP buscado com timeout de 2s

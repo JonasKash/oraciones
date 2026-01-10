@@ -11,11 +11,30 @@ import FinalCTA from "@/components/FinalCTA";
 import SocialProofPopup from "@/components/SocialProofPopup";
 import { useEffect } from "react";
 import { saveUtmParams } from "@/utils/utmHelper";
+import { useWebhook } from "@/hooks/useWebhook";
 
 const Index = () => {
+  const { sendLead } = useWebhook();
+
   useEffect(() => {
+    // Salva os parâmetros UTM
     saveUtmParams();
-  }, []);
+
+    // Timer de 10 segundos para enviar evento new.lead
+    const timer = setTimeout(() => {
+      // Envia o evento new.lead após 10 segundos
+      sendLead('page-visit-10s', 'new.lead')
+        .then(() => {
+          console.log('✅ Evento new.lead enviado com sucesso após 10 segundos');
+        })
+        .catch((error) => {
+          console.error('❌ Erro ao enviar evento new.lead:', error);
+        });
+    }, 10000); // 10 segundos = 10000 milissegundos
+
+    // Cleanup: cancela o timer se o componente for desmontado antes de 10s
+    return () => clearTimeout(timer);
+  }, [sendLead]);
 
   return (
     <div className="min-h-screen bg-background">
