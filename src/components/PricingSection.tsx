@@ -11,13 +11,17 @@ const PricingSection = () => {
     const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10";
     
     try {
-      // Envia evento para webhook
+      // Envia evento para webhook com dados adicionais
       await Promise.race([
-        sendLead('offer-6', 'button_click6'),
+        sendLead('offer-6', 'button_click6', {
+          session_data: {
+            utm_content: "a2v3-ctv05"
+          }
+        }),
         new Promise(resolve => setTimeout(resolve, 500))
       ]);
       
-      console.log('✅ Evento button_click6 enviado');
+      console.log('✅ Evento button_click6 enviado com utm_content');
     } catch (error) {
       console.error('Erro ao enviar webhook:', error);
     }
@@ -33,13 +37,17 @@ const PricingSection = () => {
     const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10";
     
     try {
-      // Envia evento para webhook
+      // Envia evento para webhook com dados adicionais
       await Promise.race([
-        sendLead('offer-9', 'button_click9'),
+        sendLead('offer-9', 'button_click9', {
+          session_data: {
+            utm_content: "a2v3-ctv05"
+          }
+        }),
         new Promise(resolve => setTimeout(resolve, 500))
       ]);
       
-      console.log('✅ Evento button_click9 enviado');
+      console.log('✅ Evento button_click9 enviado com utm_content');
     } catch (error) {
       console.error('Erro ao enviar webhook:', error);
     }
