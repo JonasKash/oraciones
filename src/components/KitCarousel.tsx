@@ -8,23 +8,28 @@ import mockupBiblia90Dias from "@/assets/mockup-biblia-90-dias.png";
 const kitItems = [
   {
     image: mockup30Oracoes,
-    title: "30 Oraciones Guiadas",
-    description: "Para cada área de la vida"
+    title: "✔️ 30 Oraciones Guiadas",
+    description: "Una por día. Sabes exactamente qué decir y cómo orar."
   },
   {
     image: mockupVersiculosPoderosos,
-    title: "Versículos Poderosos",
-    description: "Para cada área de la vida"
+    title: "✔️ Oraciones para cada área de tu vida",
+    description: "Dinero, salud, familia, decisiones y paz interior."
   },
   {
     image: mockup50Versiculos,
-    title: "Los 50 Versículos",
-    description: "Más memorables de la Biblia"
+    title: "✔️ Versículos Poderosos seleccionados",
+    description: "La Palabra correcta para el momento correcto."
   },
   {
     image: mockupBiblia90Dias,
-    title: "Cómo Leer la Biblia",
-    description: "En 90 días"
+    title: "✔️ Los 50 Versículos más importantes",
+    description: "Para fortalecer tu fe y tu mente cada día."
+  },
+  {
+    image: mockupBiblia90Dias,
+    title: "✔️ Guía práctica: Cómo leer la Biblia sin confundirte",
+    description: "Paso a paso, incluso si nunca la has leído."
   }
 ];
 
@@ -81,11 +86,11 @@ const KitCarousel = () => {
     <section className="py-16 px-4 bg-card overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <h2 className="font-heading text-3xl md:text-4xl text-center mb-4">
-          Lo que vas a recibir
+          Lo que vas a recibir al entrar hoy
         </h2>
         
-        <div className="text-center mb-12 text-muted-foreground">
-          Guía Completa de 30 Oraciones para Prosperidad y Abundancia
+        <div className="text-center mb-12 text-muted-foreground max-w-2xl mx-auto">
+          Una guía simple para aprender a orar con dirección, paz y propósito.
         </div>
 
         {/* Immersive 3D Carousel */}

@@ -38,8 +38,8 @@ const HeroSection = () => {
         </div>
 
         <h2 className="font-heading text-4xl md:text-5xl lg:text-6xl text-foreground mb-4 leading-tight uppercase">
-          Pides con fe, <AnimatedText 
-            text="pero no recibes"
+          Oras todos los días. Y aun así, <AnimatedText 
+            text="nada cambia"
             textClassName="font-heading"
             underlineClassName="text-gold"
             underlineDuration={1.2}
@@ -47,9 +47,9 @@ const HeroSection = () => {
         </h2>
 
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
-          No es que Dios no responda,{" "}
+          No es falta de fe.{" "}
           <span className="font-semibold text-foreground italic">
-            es que tu mente no está preparada para orar.
+            Es que nadie te enseñó cómo orar de una forma que realmente conecte tu mente con Dios.
           </span>
         </p>
 
