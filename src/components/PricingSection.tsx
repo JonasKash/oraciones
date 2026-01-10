@@ -1,91 +1,7 @@
 import { Check, Star } from "lucide-react";
 import CountdownTimer from "./CountdownTimer";
-import { useEffect } from "react";
-import { addUtmToCheckoutUrl, saveUtmParams } from "@/utils/utmHelper";
-import { useWebhook } from "@/hooks/useWebhook";
 
 const PricingSection = () => {
-  const { sendLead } = useWebhook();
-
-  useEffect(() => {
-    saveUtmParams();
-  }, []);
-
-  // Handler para o botão da oferta de $6
-  const handleBasicPlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    
-    console.log('🛒 Clique no botão $6 USD detectado');
-    
-    // 1. Envia webhook para N8N com evento específico
-    const webhookPromise = sendLead('offer-6', 'button_click_offer_6').catch(error => {
-      console.error('Error sending lead for $6 offer:', error);
-    });
-
-    // 2. Dispara eventos do Pixel Meta
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'Lead', {
-        content_name: 'Plan Básico $6',
-        value: 6.00,
-        currency: 'USD'
-      });
-      (window as any).fbq('track', 'InitiateCheckout', {
-        content_name: 'Plan Básico $6',
-        value: 6.00,
-        currency: 'USD'
-      });
-    }
-
-    // 3. Aguarda webhook (máx 500ms) ou timeout
-    await Promise.race([
-      webhookPromise,
-      new Promise(resolve => setTimeout(resolve, 500))
-    ]);
-
-    // 4. Redireciona para checkout com UTMs
-    const hotmartUrl = 'https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10';
-    const finalUrl = addUtmToCheckoutUrl(hotmartUrl);
-    console.log('🚀 Redirecionando para:', finalUrl);
-    window.location.href = finalUrl;
-  };
-
-  // Handler para o botão da oferta de $9
-  const handleCompletePlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    
-    console.log('🛒 Clique no botão $9 USD detectado');
-    
-    // 1. Envia webhook para N8N com evento específico
-    const webhookPromise = sendLead('offer-9', 'button_click_offer_9').catch(error => {
-      console.error('Error sending lead for $9 offer:', error);
-    });
-
-    // 2. Dispara eventos do Pixel Meta
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'Lead', {
-        content_name: 'Plan Completo $9',
-        value: 9.00,
-        currency: 'USD'
-      });
-      (window as any).fbq('track', 'InitiateCheckout', {
-        content_name: 'Plan Completo $9',
-        value: 9.00,
-        currency: 'USD'
-      });
-    }
-
-    // 3. Aguarda webhook (máx 500ms) ou timeout
-    await Promise.race([
-      webhookPromise,
-      new Promise(resolve => setTimeout(resolve, 500))
-    ]);
-
-    // 4. Redireciona para checkout com UTMs
-    const hotmartUrl = 'https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10';
-    const finalUrl = addUtmToCheckoutUrl(hotmartUrl);
-    console.log('🚀 Redirecionando para:', finalUrl);
-    window.location.href = finalUrl;
-  };
   return (
     <section id="offer" className="py-20 px-4 bg-background">
       <div className="max-w-5xl mx-auto">
@@ -134,10 +50,9 @@ const PricingSection = () => {
 
             <a
               href="https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10"
-              onClick={handleBasicPlanClick}
               className="block w-full bg-secondary text-secondary-foreground py-4 rounded-full font-semibold text-center hover:bg-secondary/80 transition-colors"
             >
-              RECIBIR GUÍA POR $6USD
+              Quiero la Guía por $ 6 USD
             </a>
           </div>
 
@@ -188,10 +103,9 @@ const PricingSection = () => {
 
             <a
               href="https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10"
-              onClick={handleCompletePlanClick}
               className="block w-full bg-gradient-cta text-foreground py-4 rounded-full font-semibold text-center hover:opacity-90 transition-all animate-pulse-glow"
             >
-              RECIBIR GUÍA COMPLETA POR $9USD
+              PLAN COMPLETO $9
             </a>
           </div>
         </div>
