@@ -1,7 +1,50 @@
 import { Check, Star } from "lucide-react";
 import CountdownTimer from "./CountdownTimer";
+import { useWebhook } from "@/hooks/useWebhook";
 
 const PricingSection = () => {
+  const { sendLead } = useWebhook();
+
+  const handleBasicPlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const checkoutUrl = "https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10";
+    
+    try {
+      // Envia evento para webhook
+      await Promise.race([
+        sendLead('offer-6', 'button_click6'),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ]);
+      
+      console.log('✅ Evento button_click6 enviado');
+    } catch (error) {
+      console.error('Erro ao enviar webhook:', error);
+    }
+    
+    // Redireciona para checkout
+    window.location.href = checkoutUrl;
+  };
+
+  const handleCompletePlanClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const checkoutUrl = "https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10";
+    
+    try {
+      // Envia evento para webhook
+      await Promise.race([
+        sendLead('offer-9', 'button_click9'),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ]);
+      
+      console.log('✅ Evento button_click9 enviado');
+    } catch (error) {
+      console.error('Erro ao enviar webhook:', error);
+    }
+    
+    // Redireciona para checkout
+    window.location.href = checkoutUrl;
+  };
+
   return (
     <section id="offer" className="py-20 px-4 bg-background">
       <div className="max-w-5xl mx-auto">
@@ -50,6 +93,7 @@ const PricingSection = () => {
 
             <a
               href="https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10"
+              onClick={handleBasicPlanClick}
               className="block w-full bg-secondary text-secondary-foreground py-4 rounded-full font-semibold text-center hover:bg-secondary/80 transition-colors"
             >
               Quiero la Guía por $ 6 USD
@@ -103,6 +147,7 @@ const PricingSection = () => {
 
             <a
               href="https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10"
+              onClick={handleCompletePlanClick}
               className="block w-full bg-gradient-cta text-foreground py-4 rounded-full font-semibold text-center hover:opacity-90 transition-all animate-pulse-glow"
             >
               PLAN COMPLETO $9
