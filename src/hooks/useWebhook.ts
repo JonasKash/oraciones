@@ -195,8 +195,17 @@ export const useWebhook = () => {
         ...additionalData
       };
 
-      // Aguarda IP e localização (máx 5s)
-      const locationData = await locationPromise;
+      // Tenta obter IP e localização com timeout de 2s (não bloqueia muito)
+      let locationData: { ip?: string; country?: string; city?: string; region?: string } = {};
+      try {
+        const result = await Promise.race([
+          locationPromise,
+          new Promise<{}>(resolve => setTimeout(() => resolve({}), 2000))
+        ]);
+        locationData = result || {};
+      } catch (err) {
+        console.warn('⚠️ Timeout ou erro na geolocalização, continuando sem esses dados');
+      }
       
       console.log('📍 DADOS DE LOCALIZAÇÃO RECEBIDOS:', locationData);
       
@@ -218,6 +227,11 @@ export const useWebhook = () => {
       }
 
       console.log('📦 PAYLOAD FINAL A SER ENVIADO:', JSON.stringify(payload, null, 2));
+      console.log('🌐 Enviando para: https://wbn.araxa.app/webhook/receive-inf');
+
+      // Cria um AbortController para timeout de 5s
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
 
       // Envia para o webhook N8N
       const response = await fetch('https://wbn.araxa.app/webhook/receive-inf', {
@@ -226,13 +240,19 @@ export const useWebhook = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+
       if (!response.ok) {
-        throw new Error(`Webhook error: ${response.status}`);
+        const errorText = await response.text().catch(() => 'Unknown error');
+        console.error('❌ Webhook retornou erro:', response.status, errorText);
+        throw new Error(`Webhook error: ${response.status} - ${errorText}`);
       }
 
-      const result = await response.json();
+      const result = await response.json().catch(() => ({ success: true }));
+      console.log('✅ Webhook respondido com sucesso:', result);
       setIsLoading(false);
       return result;
 

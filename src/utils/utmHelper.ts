@@ -30,7 +30,8 @@ export const getUtmParams = (): Record<string, string> => {
 };
 
 /**
- * Adiciona parâmetros UTM à URL de checkout
+ * Adiciona parâmetros UTM e SCK à URL de checkout da Hotmart
+ * SCK é o formato preferido da Hotmart para rastreamento de vendas
  */
 export const addUtmToCheckoutUrl = (checkoutUrl: string): string => {
   const utmParams = getSavedUtmParams();
@@ -42,12 +43,35 @@ export const addUtmToCheckoutUrl = (checkoutUrl: string): string => {
     return checkoutUrl;
   }
   
+  // Cria o parâmetro SCK (formato Hotmart)
+  // Formato: sck=source|medium|campaign|content|term
+  const sckParts = [
+    utmParams.utm_source || '',
+    utmParams.utm_medium || '',
+    utmParams.utm_campaign || '',
+    utmParams.utm_content || '',
+    utmParams.utm_term || ''
+  ].filter(part => part !== ''); // Remove partes vazias
+  
+  let finalUrl = checkoutUrl;
   const separator = checkoutUrl.includes('?') ? '&' : '?';
+  
+  // Adiciona SCK (parâmetro principal da Hotmart)
+  if (sckParts.length > 0) {
+    const sckValue = sckParts.join('|');
+    finalUrl = `${finalUrl}${separator}sck=${encodeURIComponent(sckValue)}`;
+    console.log('✅ SCK adicionado:', sckValue);
+  }
+  
+  // Também adiciona UTMs individuais como backup
   const utmString = Object.entries(utmParams)
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
     .join('&');
   
-  const finalUrl = `${checkoutUrl}${separator}${utmString}`;
+  if (utmString) {
+    finalUrl = `${finalUrl}&${utmString}`;
+  }
+  
   console.log('✅ URL final do checkout:', finalUrl);
   
   return finalUrl;

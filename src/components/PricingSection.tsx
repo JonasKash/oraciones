@@ -16,24 +16,30 @@ const PricingSection = () => {
     e.preventDefault();
     const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=sxnbohaq&checkoutMode=10";
     
+    // Prepara URL com UTMs antes de enviar webhook
+    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    
     try {
-      // Envia evento para webhook com dados adicionais
-      await Promise.race([
-        sendLead('offer-6', 'button_click6', {
-          session_data: {
-            utm_content: "a2v3-ctv05"
-          }
-        }),
-        new Promise(resolve => setTimeout(resolve, 500))
-      ]);
+      // Envia evento para webhook - não bloqueia o redirecionamento
+      sendLead('offer-6', 'button_click6', {
+        session_data: {
+          utm_content: "a2v3-ctv05"
+        }
+      }).then(() => {
+        console.log('✅ Evento button_click6 enviado com sucesso para webhook');
+      }).catch((error) => {
+        console.error('❌ Erro ao enviar webhook button_click6:', error);
+      });
       
-      console.log('✅ Evento button_click6 enviado com utm_content');
+      // Aguarda um pouco para garantir que o webhook comece a ser enviado
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      console.log('✅ Evento button_click6 iniciado, redirecionando...');
     } catch (error) {
-      console.error('Erro ao enviar webhook:', error);
+      console.error('Erro ao processar webhook:', error);
     }
     
-    // Adiciona UTMs ao checkout e redireciona
-    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    // Redireciona mesmo se o webhook ainda estiver sendo processado
     console.log('🔗 Redirecionando para:', checkoutUrlWithUtms);
     window.location.href = checkoutUrlWithUtms;
   };
@@ -42,24 +48,30 @@ const PricingSection = () => {
     e.preventDefault();
     const baseCheckoutUrl = "https://pay.hotmart.com/J103688261V?off=7duovx39&checkoutMode=10";
     
+    // Prepara URL com UTMs antes de enviar webhook
+    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    
     try {
-      // Envia evento para webhook com dados adicionais
-      await Promise.race([
-        sendLead('offer-9', 'button_click9', {
-          session_data: {
-            utm_content: "a2v3-ctv05"
-          }
-        }),
-        new Promise(resolve => setTimeout(resolve, 500))
-      ]);
+      // Envia evento para webhook - não bloqueia o redirecionamento
+      sendLead('offer-9', 'button_click9', {
+        session_data: {
+          utm_content: "a2v3-ctv05"
+        }
+      }).then(() => {
+        console.log('✅ Evento button_click9 enviado com sucesso para webhook');
+      }).catch((error) => {
+        console.error('❌ Erro ao enviar webhook button_click9:', error);
+      });
       
-      console.log('✅ Evento button_click9 enviado com utm_content');
+      // Aguarda um pouco para garantir que o webhook comece a ser enviado
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      console.log('✅ Evento button_click9 iniciado, redirecionando...');
     } catch (error) {
-      console.error('Erro ao enviar webhook:', error);
+      console.error('Erro ao processar webhook:', error);
     }
     
-    // Adiciona UTMs ao checkout e redireciona
-    const checkoutUrlWithUtms = addUtmToCheckoutUrl(baseCheckoutUrl);
+    // Redireciona mesmo se o webhook ainda estiver sendo processado
     console.log('🔗 Redirecionando para:', checkoutUrlWithUtms);
     window.location.href = checkoutUrlWithUtms;
   };
